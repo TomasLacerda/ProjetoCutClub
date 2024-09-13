@@ -1,0 +1,149 @@
+
+/* Agenda de Contatos - PHP */
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: #232323;
+    font-family: Verdana, sans-serif;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.navbar {
+    background-color: #000000cc;
+}
+
+.navbar-header {
+    margin: auto;
+    letter-spacing: 2px;
+}
+
+.navbar-header a {
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 1.2em;
+    color: #ced3d8;
+    text-decoration: none;
+}
+
+.navbar-header a:hover {
+    color: #ffffff;
+}
+
+.titulo {
+    margin-top: 65px;
+    margin-bottom: 35px;
+}
+
+/* Menu dropdown Login/Logout */
+.dropdown > ul {
+    background-color: #232323;
+}
+
+.dropdown-menu > li > a {
+    color: #999999;
+}
+
+#center {
+    text-align: center;
+    margin: 35px 0;
+}
+
+.box-wrapper {
+    margin-top: 10rem;
+}
+
+.button-row {
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Loading */
+.modal-loading {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: #00000050
+                url('../img/loader.png')
+                50% 35% 
+                no-repeat;
+}
+
+body.loading .modal-loading {
+    overflow: hidden;
+}
+
+[data-tooltip] {
+    position: relative;
+    font-weight: normal;
+}
+  
+[data-tooltip]:after {
+  display: none;
+  position: absolute;
+  top: -5px;
+  padding: 5px;
+  border-radius: 3px;
+  left: calc(100% + 2px);
+  content: attr(data-tooltip);
+  white-space: nowrap;
+  background-color: #0095ff;
+  color: White;
+}
+  
+[data-tooltip]:hover:after {
+  display: block;
+}
+
+#appearance-select {
+    -webkit-appearance: none;
+    /* Remove estilo padrão do Chrome */
+    -moz-appearance: none;
+    /* Remove estilo padrão do FireFox */
+    appearance: none;
+    /* Remove estilo padrão do FireFox*/
+    background: url(http://www.webcis.com.br/images/imagens-noticias/select/ico-seta-appearance.gif) no-repeat #eeeeee;
+    /* Imagem de fundo (Seta) */
+    background-position: 21.5rem center;
+    /*Posição da imagem do background*/
+    width: 21.5rem;
+    /* Tamanho do select, maior que o tamanho da div "div-select" */
+    height: 2.5rem;
+    /* Altura do select, importante para que tenha a mesma altura em todo os navegadores */
+    border: 2px solid #ddd;
+}
+
+#cadastrar {
+    font: bolder, 'Arial';
+    font-size: 1.1rem;
+    color: white;
+    min-width: 30%;
+    text-align: left;
+    float:left;
+}
+
+#login {
+    font: bolder, 'Arial';
+    font-size: 1.1rem;
+    color: white;
+    min-width: 30%;
+    text-align: center;
+    float:center;
+}
+
+#voltar {
+    font: bolder, 'Arial';
+    font-size: 1.1rem;
+    color: white;
+    min-width: 25%;
+    text-align: center;
+    justify-content: end;
+    float: right;
+}
