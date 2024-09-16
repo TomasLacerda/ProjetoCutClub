@@ -92,8 +92,12 @@
                                             Valor: R$<?= $dados['valor'] ?><br>
                                             Duração: <?= formatarDuracao($dados['duracao']) ?><br> <!-- Aqui a funÃ§Ã£o Ã© chamada -->
                                             Descricao: <?= $dados['descricao'] ?><br>
-                                            <a href="editarContato.php?source=Barbeiro&id=<?= $dados['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i></a>
-                                            <button onclick="confirmarExclusao(<?= $dados['id'] ?>)" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                                            <!--<a href="editarContato.php?source=Barbeiro&id=<?= $dados['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i></a>-->
+                                            <?php 
+                                            echo ' <a href="#" class="delete-link" data-id="' . $dados['id'] . '" title="Excluir">';
+                                            echo '<i class="fas fa-trash-alt" style="color: red;"></i>';
+                                            echo '</a>';
+                                            ?>
                                         </td>
                                     </tr>
                             <?php } ?>
@@ -120,20 +124,47 @@
             $('#info_' + id).toggleClass('show');
         }
 
-        function confirmarExclusao(id) {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'VocÃª realmente deseja excluir este cadastro?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sim, excluir!',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'cancelarAgendamento.php?id=' + id;
-                }
+        document.querySelectorAll('.delete-link').forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                e.preventDefault();
+                const idServico = this.getAttribute('data-id'); // Pegue o ID do serviço
+
+                // Exibe a mensagem de confirmação
+                Swal.fire({
+                    title: `Tem certeza que deseja excluir o serviço: ${idServico}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, excluir!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Se o usuário confirmar, enviar o AJAX para excluir
+                        fetch('../Controller/servicoController.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `id_servico=${idServico}&excluir=excluir`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.sucesso) {
+                                Swal.fire('Sucesso', 'Serviço excluído com sucesso!', 'success')
+                                .then(() => {
+                                    // Recarregar a página após a exclusão
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Erro', 'Erro ao excluir o serviço.', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Erro', `Erro: ${error}`, 'error');
+                        });
+                    }
+                });
             });
-        }
+        });
     </script>
 </body>
 </html>

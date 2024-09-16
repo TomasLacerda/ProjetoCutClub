@@ -81,8 +81,12 @@
                                         <td colspan="2">
                                             Email: <?= $dados['email'] ?><br>
                                             Telefone: <?= $formattedPhone ?><br>
-                                            <a href="editarContato.php?source=Barbeiro&id=<?= $dados['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i></a>
-                                            <button onclick="confirmarExclusao(<?= $dados['id'] ?>)" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                                            <!--<a href="editarContato.php?source=Barbeiro&id=<?= $dados['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i></a>-->
+                                            <?php 
+                                            echo ' <a href="#" class="delete-link" data-id="' . $dados['id'] . '" title="Excluir">';
+                                            echo '<i class="fas fa-trash-alt" style="color: red;"></i>';
+                                            echo '</a>';
+                                            ?>
                                         </td>
                                     </tr>
                             <?php } ?>
@@ -106,21 +110,47 @@
             $('#info_' + id).toggleClass('show');
         }
 
-        function confirmarExclusao(id) {
-            event.stopPropagation(); // Previne a propagação do evento no DOM
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Você realmente deseja excluir este cadastro?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sim, excluir!',
-                cancelButtonText: 'Não, cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'exclusaoContato.php?id=' + id;
-                }
+        document.querySelectorAll('.delete-link').forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                e.preventDefault();
+                const idBarbeiro = this.getAttribute('data-id'); // Pegue o ID do serviço
+
+                // Exibe a mensagem de confirmação
+                Swal.fire({
+                    title: `Tem certeza que deseja excluir o barbeiro: ${idBarbeiro}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, excluir!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Se o usuário confirmar, enviar o AJAX para excluir
+                        fetch('../Controller/barbeiroController.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `id_barbeiro=${idBarbeiro}&excluir=excluir`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.sucesso) {
+                                Swal.fire('Sucesso', 'Barbeiro excluído com sucesso!', 'success')
+                                .then(() => {
+                                    // Recarregar a página após a exclusão
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Erro', 'Erro ao excluir o barbeiro.', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Erro', `Erro: ${error}`, 'error');
+                        });
+                    }
+                });
             });
-        }
+        });
     </script>
 </body>
 </html>

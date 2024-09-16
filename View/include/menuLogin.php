@@ -24,7 +24,7 @@ session_start();
     }
 
     #subtitle {
-        font-family: 'Dancing Script', cursive;
+        font-family: 'Georgia', serif;
         color: #F8DE7E;
         font-size: 2.5rem;
         text-align: center;

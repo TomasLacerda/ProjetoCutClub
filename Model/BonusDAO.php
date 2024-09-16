@@ -63,6 +63,41 @@ class BonusDAO
 
     }
 
+    public function updateDAO($agendar) 
+    {
+        require_once "ConexaoDB.php";        
+        $db = new ConexaoDB();
+    
+        $conexao = $db->abrirConexaoDB();
+    
+        // Corrige a query para UPDATE usando SET e WHERE
+        $sql = "UPDATE bonus 
+                SET id_servico = ?, data_inicio = ?, data_fim = ?, meta = ?
+                WHERE id_servico = ?";
+    
+        // Cria o prepared statement
+        $stmt = $conexao->prepare($sql);
+    
+        // Vincula o parâmetro que será inserido no DB
+        $stmt->bind_param("isssi", $id_servico, $dtInicio, $dtFim, $meta, $id_servico); // Incluí o id no bind_param
+    
+        // Recebe os valores guardados no objeto
+        $id_servico = $agendar->id_servico;
+        $meta = $agendar->meta;
+        $dtInicio = $agendar->data_inicio;
+        $dtFim = $agendar->data_fim;
+        $id = $agendar->id; // Suponha que você tenha um campo 'id' no objeto para identificar o registro
+    
+        // Executa o Statement
+        $cadastrou = $stmt->execute();
+    
+        // Fecha Statement e conexão
+        $stmt->close();
+        $db->fecharConexaoDB($conexao);
+    
+        return $cadastrou;
+    }
+
     public function buscarContatoDAO($contato)
     {
         require_once "ConexaoDB.php";        
@@ -136,31 +171,29 @@ class BonusDAO
 
     }
 
-    public function excluirAgendamentoDAO($agenda)
+    public function deletarBonus($idServico)
     {
         require_once "ConexaoDB.php";
         $db = new ConexaoDB();
         $conexao = $db->abrirConexaoDB();
-
-        // monta o update
-        $sql = "DELETE FROM agenda WHERE agenda.id in (?)";
-
-        // cria o prepared statement
+    
+        // Monta o SQL para deletar
+        $sql = "DELETE FROM bonus WHERE id_servico = ?";
+    
+        // Cria o prepared statement
         $stmt = $conexao->prepare($sql);
-
-        //Vincula o parametro que sera inserido no DB
-        $stmt->bind_param("s", $id);
-
-        // Recebe os valores guardados no objeto
-        $id = $agenda->id;
-
+    
+        // Vincula o parâmetro que será inserido no DB
+        $stmt->bind_param("i", $idServico);
+    
         // Executa o Statement
         $deletou = $stmt->execute();
-
-        // Fecha Statement e conex�o
+    
+        // Fecha Statement e conexão
         $stmt->close();
         $db->fecharConexaoDB($conexao);
-
+    
         return $deletou;
     }
+    
 }

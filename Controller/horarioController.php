@@ -10,7 +10,7 @@ if (isset($_POST['cadastrar'])) {
 } elseif (isset($_POST['editar'])) {
     editarBonus();
 } elseif (isset($_POST['excluir'])) {
-    excluirBonus();
+    excluirHorario();
 } else {
     header("Location: ../View/home.php");
     exit();
@@ -184,11 +184,11 @@ function editarBonus() {
     }
 }
 
-function excluirBonus() {
-    include_once "../Model/BonusDAO.php";
-    $idServico = isset($_POST['id_servico']) ? intval($_POST['id_servico']) : null;
+function excluirHorario() {
+    include_once "../Model/ExpedienteDAO.php";
+    $idHorario = isset($_POST['id_horario']) ? intval($_POST['id_horario']) : null;
 
-    if (!$idServico) {
+    if (!$idHorario) {
         echo json_encode(array(
             'sucesso' => false,
             'mensagem' => 'ID do serviço inválido!'
@@ -196,18 +196,18 @@ function excluirBonus() {
         exit();
     }
 
-    $bonusDAO = new BonusDAO();
-    $deletou = $bonusDAO->deletarBonus($idServico);
+    $expedienteDAO = new ExpedienteDAO();
+    $deletou = $expedienteDAO->excluirHorarioDAO($idHorario);
 
     if ($deletou) {
         echo json_encode(array(
             'sucesso' => true,
-            'mensagem' => 'Bônus excluído com sucesso!'
+            'mensagem' => 'Expediente excluído com sucesso!'
         ));
     } else {
         echo json_encode(array(
             'sucesso' => false,
-            'mensagem' => 'Erro ao excluir o bônus.'
+            'mensagem' => 'Erro ao excluir o expediente.'
         ));
     }
 }

@@ -56,10 +56,6 @@
     .btn {
         border-radius: 10px;
     }
-
-    .rodape {
-    text-align: center;
-    }
 </style>
 
 <body>

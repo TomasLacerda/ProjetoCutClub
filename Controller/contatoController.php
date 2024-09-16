@@ -20,6 +20,9 @@ if (isset($_POST['cadastrar'])) {
 } elseif (isset($_POST['login'])) {
     efetuarLogin();
 // Logout
+} elseif (isset($_POST['recuperar'])) {
+    recuperarSenha();
+// Logout
 } elseif (isset($_POST['logout'])) {
     efetuarLogout();
 } else {
@@ -29,7 +32,6 @@ if (isset($_POST['cadastrar'])) {
 
 
 // Functions
-
 function efetuarLogin()
 {
     // Incluir arquivos
@@ -67,6 +69,52 @@ function efetuarLogin()
             'mensagem' => $response['mensagem'],
             'codigo' => 1
         ));
+        exit();
+    } else {
+        // Mostra mensagem de erro
+        print json_encode(array(
+            'mensagem' => $response['mensagem'],
+            'campo' => $response['campo'],
+            'codigo' => 0
+        ));
+        exit();
+    }
+}
+
+function recuperarSenha()
+{
+    // Incluir arquivos
+    include_once "../Model/Contato.php";
+    include_once "../Model/ContatoService.php";
+
+    // Retorno Json - validar
+    header('Content-Type: application/json');
+
+    $email = $_POST['email'];
+    $apelido = $_POST['apelido'];
+    $nome = $_POST['nome'];
+
+    // Cria os objetos
+    $contato = new Contato();
+    $service = new ContatoService();
+
+    // Preenche os objetos
+    $contato->email = $email;
+    $contato->nome = $nome;
+    $contato->sobrenome = $apelido;
+
+    // Envia os objetos
+    $response = $service->recuperarSenhaService($contato);
+
+    // Verifica o tipo de retorno
+    if ($response['sucesso']) {
+        // Mostra mensagem de sucesso
+        print json_encode([
+            'mensagem' => $response['mensagem'],
+            'senha' => $response['senha'],
+            'sucesso' => true,
+            'codigo' => 1
+        ]);
         exit();
     } else {
         // Mostra mensagem de erro

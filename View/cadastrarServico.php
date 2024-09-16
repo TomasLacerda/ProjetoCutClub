@@ -128,8 +128,8 @@
                     <div class="rodape">
                         <p style="font-weight: bold;">Campos marcados com (*) são obrigatórios.</p>
                     </div>
+                    <div id="status"></div>
                 </fieldset>
-                <div id="status"></div>
             </div>
         </div>
     </div>

@@ -99,6 +99,39 @@ class ContatoDAO
         return $resultado;
     }
 
+    public function buscarSenhaDAO($contato)
+    {
+        require_once "ConexaoDB.php";        
+        $db = new ConexaoDB();
+    
+        $conexao = $db->abrirConexaoDB();
+    
+        // Monta query Busca usando LOWER() para ignorar maiúsculas/minúsculas
+        $sql = "SELECT * FROM contato WHERE LOWER(email) = LOWER(?) AND LOWER(nome) = LOWER(?) AND LOWER(sobrenome) = LOWER(?)";
+    
+        // cria o prepared statement
+        $stmt = $conexao->prepare($sql);
+    
+        // Vincula o parametro que sera inserido no DB
+        $stmt->bind_param("sss", $email, $nome, $sobrenome);
+    
+        $email = $contato->email;
+        $nome = $contato->nome;
+        $sobrenome = $contato->sobrenome;
+
+        // Executa o Statement
+        $stmt->execute();
+
+        // Guarda o resultado encontrado
+        $resultado = $stmt->get_result()->fetch_assoc();
+    
+        // Fecha Statement e conexão
+        $stmt->close();
+        $db->fecharConexaoDB($conexao);
+
+        return $resultado;
+    }
+
     public function editarContatoDAO($contato) 
     {
         include_once "ContatoDAO.php";

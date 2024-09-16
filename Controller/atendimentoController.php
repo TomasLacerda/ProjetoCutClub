@@ -17,6 +17,8 @@ if (isset($_POST['cadastrar'])) {
 // Expediente
 } if(isset($_POST['expediente'])) {
     cadastrarExpediente();
+} if(isset($_POST['excluir'])) {
+    excluirAgendamento();
 } else {
     header("Location: ../View/home.php");
 }
@@ -185,7 +187,7 @@ function cadastrarDatas()
     include_once "../Model/DtIndisponivel.php";
     include_once "../Model/DtIndisponivelService.php";
     include_once "../Model/ContatoDAO.php";
-    var_dump($_REQUEST);
+
     $barbeiroDAO = new ContatoDAO();
     $countBarbeiro = '';
 
@@ -259,6 +261,15 @@ function cadastrarExpediente()
     $hrInicioItv = $_POST['hrInicioItv'];
     $hrFimItv = $_POST['hrFimItv'];
 
+    // Verificação básica dos campos obrigatórios
+    if (!$horaAbertura || !$horaFechamento || !$diaSemana) {
+        echo json_encode(array(
+            'sucesso' => false,
+            'mensagem' => 'Por favor, preencha todos os campos obrigatórios!'
+        ));
+        exit();
+    }
+
     // Cria os objetos
     $serviceExpediente = new ExpedienteService();
     $expediente = new Expediente();
@@ -272,7 +283,7 @@ function cadastrarExpediente()
 
     // Envia os objetos
     $response = $serviceExpediente->cadastrarDatasService($expediente);
-    //var_dump($response);
+
     // Verifica o tipo de retorno
     if ($response['sucesso']) {
         // Mostra mensagem de sucesso
@@ -308,10 +319,20 @@ function cadastrarServico()
     // Retorno Json - validar
     header('Content-Type: application/json');
 
-    $nome = $_POST['nome'];
-    $valor = $_POST['valor'];
-    $duracao = $_POST['duracao'];
-    $descricao = isset($_POST['descricao']) ? $_POST['descricao'] : '';
+    // Validação e sanitização de dados recebidos via POST
+    $nome = isset($_POST['nome']) ? $_POST['nome'] : null;
+    $valor = isset($_POST['valor']) ? floatval($_POST['valor']) : null;
+    $duracao = isset($_POST['duracao']) ? $_POST['duracao'] : null;
+    $descricao = isset($_POST['descricao']) ? $_POST['descricao'] : null;
+
+    // Verificação básica dos campos obrigatórios
+    if (!$nome || !$valor || !$duracao) {
+        echo json_encode(array(
+            'sucesso' => false,
+            'mensagem' => 'Por favor, preencha todos os campos obrigatórios!'
+        ));
+        exit();
+    }
 
     // Cria os objetos
     $servicoService = new ServicoService();
@@ -339,7 +360,7 @@ function cadastrarServico()
         $Servico->imagem = $path;
         if ($extensao != "jpg" && $extensao != "png") {
             print json_encode(array(
-                'mensagem' => 'Tipo de arquivo invÃ¡lido.',
+                'mensagem' => 'Tipo de arquivo inválido.',
                 'campo' => 'campo',
                 'codigo' => 0
             ));
@@ -432,5 +453,33 @@ function agendarHorario()
             'codigo' => 0
         ));
         exit();
+    }
+}
+
+function excluirAgendamento() {
+    include_once "../Model/AgendaDAO.php";
+    $idAgendamento = isset($_POST['id_agendamento']) ? intval($_POST['id_agendamento']) : null;
+
+    if (!$idAgendamento) {
+        echo json_encode(array(
+            'sucesso' => false,
+            'mensagem' => 'ID do agendamento inválido!'
+        ));
+        exit();
+    }
+
+    $agendaDAO = new AgendaDAO();
+    $deletou = $agendaDAO->excluirHorarioDAO($idAgendamento);
+
+    if ($deletou) {
+        echo json_encode(array(
+            'sucesso' => true,
+            'mensagem' => 'Agendamento cancelado com sucesso!'
+        ));
+    } else {
+        echo json_encode(array(
+            'sucesso' => false,
+            'mensagem' => 'Erro ao cancelar o agendamento.'
+        ));
     }
 }

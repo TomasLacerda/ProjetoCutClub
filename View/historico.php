@@ -162,15 +162,18 @@
                                     foreach ($dadosAgendado as $dados) { ?>
                                         <tr onclick="toggleInfo(<?= $dados['id'] ?>)">
                                             <td><?= $dados['id'] ?></td>
-                                            <td><?= $dados['data'] . '/' . $dados['hora_minuto'] ?></td>
+                                            <td><?= $dados['data'] . ' - ' . $dados['hora_minuto'] ?></td>
                                             <td><?= 'Exemplo Barbeiro' ?></td>
                                         </tr>
                                         <tr class="more-info" id="info_<?= $dados['id'] ?>">
                                             <td colspan="3">
                                                 Valor: R$<?= $dados['valor'] ?><br>
                                                 Descrição: <?= $dados['confirmado'] ?><br>
-                                                <a href="editarContato.php?source=Barbeiro&id=<?= $dados['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i></a>
-                                                <button onclick="confirmarExclusao(<?= $dados['id'] ?>)" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                                                <?php 
+                                                echo ' <a href="#" class="delete-link" data-id="' . $dados['id'] . '" title="Cancelar">';
+                                                echo '<i class="fas fa-trash-alt" style="color: red;"></i>';
+                                                echo '</a>';
+                                                ?>
                                             </td>
                                         </tr>
                                 <?php } ?>
@@ -210,10 +213,14 @@
                                                 <td colspan="2">
                                                     Serviço Confirmado!<br>
                                                 </td>
+                                            <?php } elseif ($dados['confirmado'] != 1 && $rsBarbeiro->num_rows <= 0) {?>
+                                                <td colspan="2">
+                                                    Aguarde confirmação do barbeiro!<br>
+                                                </td>
                                             <?php } else { ?>
                                                 <td>
                                                     <button onclick="confirmarCorte(<?= $dados['id'] ?>)" class="round-button"><i class="fas fa-check"></i></button></td>
-                                                    <td>   <button onclick="confirmarExclusao(<?= $dados['id'] ?>)" class="round-button-red"><i class="fas fa-times"></i></button>
+                                                    <td><button onclick="confirmarExclusao(<?= $dados['id'] ?>)" class="round-button-red"><i class="fas fa-times"></i></button>
                                                 </td>
                                             <?php } ?>
                                         </tr>
@@ -228,9 +235,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <div class="form-group" style="text-align: center;">
-                        <button type="button" class="btn btn-secondary" onclick="history.go(-1); return false;">Voltar</button>
                     </div>
                 </fieldset>
             </div>
@@ -311,6 +315,48 @@
                 }
             });
         }
+
+        document.querySelectorAll('.delete-link').forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                e.preventDefault();
+                const idAgendamento = this.getAttribute('data-id'); // Pegue o ID do serviço
+
+                // Exibe a mensagem de confirmação
+                Swal.fire({
+                    title: `Tem certeza que deseja cancelar o agendamento: ${idAgendamento}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, cancelar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Se o usuário confirmar, enviar o AJAX para excluir
+                        fetch('../Controller/atendimentoController.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `id_agendamento=${idAgendamento}&excluir=excluir`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.sucesso) {
+                                Swal.fire('Sucesso', 'Agendamento cancelado com sucesso!', 'success')
+                                .then(() => {
+                                    // Recarregar a página após a exclusão
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Erro', 'Erro ao cancelar o agendamento.', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Erro', `Erro: ${error}`, 'error');
+                        });
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

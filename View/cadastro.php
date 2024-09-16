@@ -65,7 +65,7 @@
                     </form>
                     <p></p>
                     <div class="rodape">
-                        <p style="font-weight: bold;">Campos marcados com (*) são obrigatórios.</p>
+                        <p style="font-weight: bold;">Campos marcados com (*) sÃ£o obrigatÃ³rios.</p>
                     </div>
                     <div id="status"></div>
                 </fieldset>
@@ -134,7 +134,7 @@
                     </form>
                         <p></p>
                         <div class="rodape">
-                            <p style="font-weight: bold;">Campos marcados com (*) são obrigatórios.</p>
+                            <p style="font-weight: bold;">Campos marcados com (*) sÃ£o obrigatÃ³rios.</p>
                         </div>
                         <div id="status"></div>
                     </fieldset>
@@ -154,20 +154,20 @@
     <script src="js/scripts.js"></script>
     <script>
         function formatarTelefone(input) {
-            // Remove todos os caracteres nÃ£o numÃ©ricos do valor do campo
+            // Remove todos os caracteres nÃÂ£o numÃÂ©ricos do valor do campo
             let cleaned = input.value.replace(/\D/g, '');
 
-            // Adiciona parÃªnteses nos dois primeiros caracteres
+            // Adiciona parÃÂªnteses nos dois primeiros caracteres
             if (cleaned.length >= 2) {
                 cleaned = "(" + cleaned.substring(0, 2) + ")" + cleaned.substring(2);
             }
 
-            // Insere hÃ­fen apÃ³s o nono caractere, se houver mais de nove caracteres
+            // Insere hÃÂ­fen apÃÂ³s o nono caractere, se houver mais de nove caracteres
             if (cleaned.length > 9) {
                 cleaned = cleaned.substring(0, 9) + "-" + cleaned.substring(9);
             }
 
-            // Limita o comprimento mÃ¡ximo do valor formatado
+            // Limita o comprimento mÃÂ¡ximo do valor formatado
             input.value = cleaned.substring(0, 14);
         }
     </script>

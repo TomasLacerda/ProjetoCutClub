@@ -260,6 +260,35 @@ function cadastrarBonus() {
     //});
 }
 
+function recuperarSenha() {
+    var dados = {
+        'email': $('#email').val(),
+        'nome': $('#nome').val(),
+        'apelido': $('#apelido').val(),
+        'recuperar': true
+    };
+
+    $.ajax({
+        url: '../Controller/contatoController.php', // Sua URL de backend
+        method: 'POST',
+        data: dados,
+        dataType: 'json',
+        success: function(response) {
+            if (response.sucesso) {
+                // Preenche o campo de senha com a senha recebida do servidor
+                $('#nova-senha').val(response.senha);
+                $('#nova-senha-group').show(); // Exibe o campo de senha
+                $('#status').text(response.mensagem).css('color', parametros.corSucesso);
+            } else {
+                $('#status').text(response.mensagem).css('color', parametros.corErro);
+            }
+        },
+        error: function() {
+            $('#status').text(response.mensagem).css('color', parametros.corErro);
+        }
+    });
+}
+
 function direcionaCadastrar() {
     carregarModalLoading();
 

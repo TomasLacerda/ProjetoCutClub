@@ -1,23 +1,20 @@
 <?php
 class ExpedienteDAO
 {
-    public function excluirHorarioDAO($horario)
+    public function excluirHorarioDAO($expediente)
     {
         require_once "ConexaoDB.php";
         $db = new ConexaoDB();
         $conexao = $db->abrirConexaoDB();
 
         // monta o update
-        $sql = "DELETE FROM dt_indisponivel WHERE id in (?)";
+        $sql = "DELETE FROM expediente WHERE id = ?";
 
         // cria o prepared statement
         $stmt = $conexao->prepare($sql);
 
         //Vincula o parametro que sera inserido no DB
-        $stmt->bind_param("s", $id);
-
-        // Recebe os valores guardados no objeto
-        $id = $horario->id;
+        $stmt->bind_param("i", $expediente);
 
         // Executa o Statement
         $cadastrou = $stmt->execute();

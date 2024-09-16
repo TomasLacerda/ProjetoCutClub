@@ -59,19 +59,19 @@
     ?>
 
 <div class="container">
-        <div class="row justify-content-center">
-            <div class="box-wrapper">
-                <div id="center">
-                    <fieldset class="box">
-                        <legend class="legend-style">Editar Cadastro</legend>
+        <div class="box-wrapper">
+            <div>
+                <fieldset class="box">
+                    <h1 id="subtitle">Editar Cadastro</h1>
+                        <div class="m-5"></div>
                         <form>
                             <div class="form-group mb-3">
-                                <label for="nome">Nome*</label>
+                                <label for="nome">Nome Completo*</label>
                                 <input type="text" id="nome" name="nome" class="form-control" value="<?php echo $nome?>">
                             </div>
 
                             <div class="form-group mb-3">
-                                <label for="sobrenome">Sobrenome*</label>
+                                <label for="sobrenome">Apelido*</label>
                                 <input type="text" id="sobrenome" name="sobrenome" class="form-control" value="<?php echo $sobrenome?>">
                             </div>
 
@@ -105,8 +105,7 @@
                             <p style="font-weight: bold;">Campos marcados com (*) são obrigatórios.</p>
                         </div>
                         <div id="status"></div>
-                    </fieldset>
-                </div>
+                </fieldset>
             </div>
         </div>
     </div>

@@ -48,7 +48,7 @@
                     <button id="login" onclick="efetuarLogin()" type="button" class="btn btn-primary">Entrar</button>
                     <p></p>
                     <hr class="white-hr">
-                    <p id="link"><a href="agendamento.php">Esqueceu a senha?</a></p>
+                    <p id="link"><a href="recuperarSenha.php">Esqueceu a senha?</a></p>
                 </form>
                 <div id="status"></div>
             </fieldset>

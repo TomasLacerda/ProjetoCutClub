@@ -194,4 +194,29 @@ class ServicoDAO
 
         return $cadastrou;
     }
+
+    public function excluirServicoDAO($idServico)
+    {
+        require_once "ConexaoDB.php";
+        $db = new ConexaoDB();
+        $conexao = $db->abrirConexaoDB();
+    
+        // Prepara a query para deletar
+        $sql = "DELETE FROM servico WHERE id = ?";
+    
+        // Cria o prepared statement
+        $stmt = $conexao->prepare($sql);
+    
+        // Vincula o parâmetro que será inserido no DB
+        $stmt->bind_param("i", $idServico); // Usando 'i' para indicar que é um inteiro
+    
+        // Executa o Statement
+        $deletou = $stmt->execute();
+    
+        // Fecha Statement e conexão
+        $stmt->close();
+        $db->fecharConexaoDB($conexao);
+    
+        return $deletou;
+    }
 }

@@ -108,6 +108,10 @@
         $ContatoDAO = new ContatoDAO();
         $stFiltro = " WHERE admin = 1 AND id =".$id;
         $rsAdmin = $ContatoDAO->recuperaTodos($stFiltro);
+
+        $stFiltro = " WHERE barbeiro = 1 AND id =".$id;
+        $rsBarbeiro = $ContatoDAO->recuperaTodos($stFiltro);
+
         $stFiltro = " WHERE id =".$id;
         $rsCliente = $ContatoDAO->recuperaTodos($stFiltro);
 
@@ -192,7 +196,7 @@
                                 $idServico = $bonus['id_servico']; // ID do serviço
                                 $meta = number_format($bonus['meta'], 2, ',', '.'); // Pontos necessários formatados para exibição
                                 $metaValue = floatval($bonus['meta']); // Pontos necessários (meta) para a comparação
-
+                        
                                 echo '<li>';
 
                                 // Verifica se o usuário tem pontos suficientes
@@ -212,17 +216,17 @@
 
                                 // Exibe os ícones de edição e lixeira se o $rsAdmin->num_rows for maior que 0
                                 if ($rsAdmin->num_rows > 0) {
-                                    echo ' <a href="editar_servico.php?id_servico=' . $idServico . '" class="edit-link" title="Editar">';
+                                    echo ' <a href="#" class="edit-link" data-id="' . $idServico . '" title="Editar">';
                                     echo '<i class="fas fa-edit" style="color: #A9A9A9;"></i>';
                                     echo '</a>';
-                                    echo ' <a href="deletar_servico.php?id_servico=' . $idServico . '" class="delete-link" title="Excluir">';
+                                    echo ' <a href="#" class="delete-link" data-id="' . $idServico . '" title="Excluir">';
                                     echo '<i class="fas fa-trash-alt" style="color: rgba(205, 92, 92, 0.9);"></i>';
                                     echo '</a>';
                                 }
-
+                        
                                 echo '</li>';
                             }
-
+                        
                             echo '</ul>';
                             echo '</div>';
                             echo '</div>';
@@ -231,17 +235,14 @@
                         }
                     ?>
 
-                    <div class="row">
-                        <div class="col">
-                            <button id="cadastrar" type="button" name="cadastrarBonus" class="btn btn-primary" style="text-align: center;">Cadastrar Bônus</button>
+                    <?php if ($rsBarbeiro->num_rows > 0) { ?>
+                        <div class="row">
+                            <div class="col">
+                                <button id="cadastrar" type="button" name="cadastrarBonus" class="btn btn-primary" style="text-align: center;">Cadastrar Bônus</button>
+                            </div>
                         </div>
-                    </div>
+                    <?php } ?>
                     <p></p>
-                    <div class="row">
-                        <div class="col">                            
-                            <button type="button-voltar" class="btn btn-secondary" onclick="history.go(-1); return false;">Voltar</button>
-                        </div>
-                    </div>
                     <div id="status"></div>
                 </fieldset>
             </div>
@@ -257,6 +258,143 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.edit-link').forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const idServico = this.getAttribute('data-id'); // Pegue o ID do serviço
+
+                    // Fazer a requisição AJAX para buscar os dados do bônus com base no ID do serviço
+                    fetch('../Controller/bonusController.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id_servico=${idServico}&buscar=buscar`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.sucesso) {
+                            // Abrir o popup para editar o bônus com os dados recebidos
+                            Swal.fire({
+                                title: 'Editar Bônus',
+                                html: `
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <label for="servico">Serviço:</label>
+                                            <input type="text" id="servico" value="${data.nome_servico}" readonly class="form-control mx-auto" style="max-width: 400px;">
+                                        </div>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <label for="meta">Meta:*</label>
+                                            <input type="number" id="meta" maxlength="5" step="0.01" value="${data.meta}" class="form-control mx-auto" style="max-width: 400px;" required>
+                                        </div>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <label for="dt_inicio">Data inicial*</label>
+                                            <input id="dt_inicio" type="date" value="${data.dt_inicio}" min="2024-01-01" max="2099-12-31" class="form-control mx-auto" style="max-width: 400px;" required>
+
+                                            <label for="dt_final">Data final*</label>
+                                            <input id="dt_final" type="date" value="${data.dt_final}" min="2024-01-01" max="2099-12-31" class="form-control mx-auto" style="max-width: 400px;" required>
+                                        </div>
+                                    </div>
+                                `,
+                                showCloseButton: true,
+                                showCancelButton: true,
+                                confirmButtonText: 'Salvar',
+                                preConfirm: () => {
+                                    const meta = document.getElementById('meta').value;
+                                    const dt_inicio = document.getElementById('dt_inicio').value;
+                                    const dt_final = document.getElementById('dt_final').value;
+
+                                    if (!meta || !dt_inicio || !dt_final) {
+                                        Swal.showValidationMessage(`Por favor, preencha todos os campos`);
+                                        return false;
+                                    }
+
+                                    // Enviar os dados via AJAX para salvar as alterações
+                                    return fetch('../Controller/bonusController.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded',
+                                        },
+                                        body: `id_servico=${idServico}&meta=${meta}&dt_inicio=${dt_inicio}&dt_final=${dt_final}&editar=editar`,
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.sucesso) {
+                                            // Exibe a mensagem de sucesso
+                                            Swal.fire('Sucesso', 'Bônus atualizado com sucesso!', 'success')
+                                            .then(() => {
+                                                // Recarregar a página após a mensagem de sucesso
+                                                window.location.reload();
+                                            });
+                                        } else {
+                                            Swal.showValidationMessage(`Erro ao salvar: ${data.mensagem}`);
+                                        }
+                                        return data;
+                                    })
+                                    .catch(error => {
+                                        Swal.showValidationMessage(`Erro: ${error}`);
+                                    });
+                                }
+                            });
+                        } else {
+                            Swal.fire('Erro', 'Erro ao buscar os dados do bônus.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire('Erro', `Erro: ${error}`, 'error');
+                    });
+                });
+            });
+
+            // Exclusão
+            document.querySelectorAll('.delete-link').forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const idServico = this.getAttribute('data-id'); // Pegue o ID do serviço
+
+                    // Exibe a mensagem de confirmação
+                    Swal.fire({
+                        title: `Tem certeza que deseja excluir o bônus do serviço: ${idServico}?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sim, excluir!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Se o usuário confirmar, enviar o AJAX para excluir
+                            fetch('../Controller/bonusController.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `id_servico=${idServico}&excluir=excluir`
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.sucesso) {
+                                    Swal.fire('Sucesso', 'Bônus excluído com sucesso!', 'success')
+                                    .then(() => {
+                                        // Recarregar a página após a exclusão
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire('Erro', 'Erro ao excluir o bônus.', 'error');
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire('Erro', `Erro: ${error}`, 'error');
+                            });
+                        }
+                    });
+                });
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementsByName('cadastrarRegra').forEach(function(element) {
                 element.addEventListener("click", function() {
@@ -369,7 +507,11 @@
                             .then(response => response.json()) // Converta a resposta para JSON
                             .then(data => {
                                 if (data.sucesso) {
-                                    Swal.fire('Sucesso', data.mensagem, 'success'); // Exibe mensagem de sucesso
+                                    Swal.fire('Sucesso', data.mensagem, 'success')
+                                    .then(() => {
+                                        // Recarregar a página após a exclusão
+                                        window.location.reload();
+                                    });
                                 } else {
                                     Swal.fire('Erro', data.mensagem, 'error'); // Exibe mensagem de erro
                                 }

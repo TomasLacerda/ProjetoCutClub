@@ -10,7 +10,7 @@ if (isset($_POST['cadastrar'])) {
 } elseif (isset($_POST['editar'])) {
     editarBonus();
 } elseif (isset($_POST['excluir'])) {
-    excluirBonus();
+    excluirServico();
 } else {
     header("Location: ../View/home.php");
     exit();
@@ -184,8 +184,8 @@ function editarBonus() {
     }
 }
 
-function excluirBonus() {
-    include_once "../Model/BonusDAO.php";
+function excluirServico() {
+    include_once "../Model/ServicoDAO.php";
     $idServico = isset($_POST['id_servico']) ? intval($_POST['id_servico']) : null;
 
     if (!$idServico) {
@@ -196,18 +196,18 @@ function excluirBonus() {
         exit();
     }
 
-    $bonusDAO = new BonusDAO();
-    $deletou = $bonusDAO->deletarBonus($idServico);
+    $servicoDAO = new ServicoDAO();
+    $deletou = $servicoDAO->excluirServicoDAO($idServico);
 
     if ($deletou) {
         echo json_encode(array(
             'sucesso' => true,
-            'mensagem' => 'Bônus excluído com sucesso!'
+            'mensagem' => 'Serviço excluído com sucesso!'
         ));
     } else {
         echo json_encode(array(
             'sucesso' => false,
-            'mensagem' => 'Erro ao excluir o bônus.'
+            'mensagem' => 'Erro ao excluir o serviço.'
         ));
     }
 }

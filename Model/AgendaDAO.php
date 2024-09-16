@@ -350,4 +350,29 @@ class AgendaDAO
 
         return $deletou;
     }
+
+    public function excluirHorarioDAO($agendamento)
+    {
+        require_once "ConexaoDB.php";
+        $db = new ConexaoDB();
+        $conexao = $db->abrirConexaoDB();
+
+        // monta o update
+        $sql = "DELETE FROM agenda WHERE id = ?";
+
+        // cria o prepared statement
+        $stmt = $conexao->prepare($sql);
+
+        //Vincula o parametro que sera inserido no DB
+        $stmt->bind_param("i", $agendamento);
+
+        // Executa o Statement
+        $cadastrou = $stmt->execute();
+
+        // Fecha Statement e conexÃ£o
+        $stmt->close();
+        $db->fecharConexaoDB($conexao);
+
+        return $cadastrou;
+    }
 }
