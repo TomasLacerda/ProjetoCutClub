@@ -41,7 +41,7 @@
         }
     </style>
 </head>
-<body>
+<body data-page-id="barbeiros">
     <?php
     include_once "include/menu.php";
     include_once "../Model/ContatoDAO.php";
@@ -63,7 +63,7 @@
                 <fieldset class="box">
                     <h1 id="subtitle">Barbeiros</h1>
                     <div class="m-5"></div>
-                    <table class="table text-white table-bg">
+                    <table class="table text-white table-bg" id="barbeiros">
                         <thead>
                             <tr>
                                 <th scope="col">ID</th>
@@ -104,7 +104,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        const pageId = document.body.getAttribute("data-page-id");
+
+        createSearchBar("barbeiros");
         function toggleInfo(id) {
             event.stopPropagation(); // Previne a propagação do evento no DOM
             $('#info_' + id).toggleClass('show');

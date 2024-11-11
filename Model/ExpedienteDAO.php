@@ -173,7 +173,7 @@ class ExpedienteDAO
         return $resultado;
     }
 
-    public function recuperaTodos()
+    public function recuperaTodos($stFiltro=null)
     {
         require_once "ConexaoDB.php";        
         $db = new ConexaoDB();
@@ -181,7 +181,7 @@ class ExpedienteDAO
         $conexao = $db->abrirConexaoDB();
     
         // Monta query Busca
-        $sql = " SELECT * FROM expediente ";
+        $sql = " SELECT * FROM expediente ".$stFiltro;
 
         // cria o prepared statement
         $stmt = $conexao->prepare($sql);

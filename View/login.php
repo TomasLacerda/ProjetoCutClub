@@ -40,7 +40,7 @@
                 <p></p>
                 <form>
                     <div class="form-group mb-3">
-                        <input type="email" class="form-control" id="email" placeholder="Telefone, nome de usuário ou email" required>
+                        <input type="email" class="form-control" id="email" placeholder="Email" required>
                     </div>
                     <div class="form-group">
                         <input type="password" class="form-control" id="senha" placeholder="Senha" required>

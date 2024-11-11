@@ -297,9 +297,12 @@
 <!-- modal -->
 <div id="modalLoading" class="modal-loading animated bounceIn"></div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <script src="js/scripts.js"></script>
 <script>
+    var userName = "<?= $_SESSION['nome']; ?>";
     const toggleContrastButton = document.getElementById('toggleContrastButton');
     const body = document.body;
 
@@ -351,4 +354,151 @@
             }
         });
     }
+
+    // Função para criar a barra de pesquisa e anexá-la acima da tabela
+    function createSearchBar(tableId) {
+        // Cria o elemento de entrada de pesquisa
+        var searchInput = document.createElement("input");
+        searchInput.setAttribute("type", "text");
+        searchInput.setAttribute("placeholder", "Pesquisar...");
+        searchInput.classList.add("search-bar");  // Classe CSS para estilização
+        searchInput.onkeyup = function() { filterTable(tableId, searchInput.value); };
+
+        // Insere o campo de busca antes da tabela
+        var table = document.getElementById(tableId);
+        table.parentNode.insertBefore(searchInput, table);
+
+        // Adiciona estilo básico
+        var style = document.createElement("style");
+        style.innerHTML = `
+            .search-bar {
+                width: 50%;
+                padding: 8px;
+                margin-bottom: 10px;
+                box-sizing: border-box;
+                font-size: 16px;
+                float: right;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Função para filtrar a tabela com base no valor de entrada
+    function filterTable(tableId, query) {
+        var filter = query.toUpperCase();
+        var table = document.getElementById(tableId);
+        var rows = table.getElementsByTagName("tr");
+
+        // Loop para verificar se cada linha da tabela deve ser exibida
+        for (var i = 1; i < rows.length; i++) { // Ignora o cabeçalho
+            var cells = rows[i].getElementsByTagName("td");
+            if (cells.length > 0) {
+                var rowText = Array.from(cells).map(cell => cell.textContent || cell.innerText).join(" ");
+                rows[i].style.display = rowText.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+    }
+
+    // Função para criar a paginação e anexá-la abaixo da tabela
+    function createPagination(tableId) {
+        var table = document.getElementById(tableId);
+        var rows = Array.from(table.getElementsByTagName("tbody")[0].getElementsByTagName("tr")) // Seleciona apenas as linhas do tbody
+                        .filter(row => !row.classList.contains("more-info")); // Ignora as linhas ocultas
+
+        var currentPage = 1;
+        var rowsPerPage = 10;
+        var totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        // Cria o elemento de paginação
+        var paginationDiv = document.createElement("div");
+        paginationDiv.classList.add("pagination-controls");
+
+        // Cria o seletor de linhas por página
+        var rowsPerPageSelect = document.createElement("select");
+        rowsPerPageSelect.classList.add("rows-per-page-select");
+        [5, 10, 20, 50].forEach(value => {
+            var option = document.createElement("option");
+            option.value = value;
+            option.innerText = `${value}`;
+            if (value === rowsPerPage) option.selected = true;
+            rowsPerPageSelect.appendChild(option);
+        });
+        rowsPerPageSelect.onchange = function() {
+            rowsPerPage = parseInt(this.value);
+            currentPage = 1;
+            totalPages = Math.ceil(rows.length / rowsPerPage);
+            renderTableWithPagination(rows, currentPage, rowsPerPage, pageDisplay, totalPages);
+        };
+        paginationDiv.appendChild(rowsPerPageSelect);
+
+        // Container para os botões de navegação
+        var navContainer = document.createElement("div");
+        navContainer.classList.add("nav-buttons");
+
+        // Cria o botão de página anterior
+        var prevButton = document.createElement("button");
+        prevButton.innerText = "Anterior";
+        prevButton.onclick = function() { changePage(--currentPage); };
+        navContainer.appendChild(prevButton);
+
+        // Exibição do número da página atual
+        var pageDisplay = document.createElement("span");
+        pageDisplay.innerText = `Página ${currentPage} de ${totalPages}`;
+        navContainer.appendChild(pageDisplay);
+
+        // Cria o botão de próxima página
+        var nextButton = document.createElement("button");
+        nextButton.innerText = "Próximo";
+        nextButton.onclick = function() { changePage(++currentPage); };
+        navContainer.appendChild(nextButton);
+
+        // Adiciona o container de navegação à área de paginação
+        paginationDiv.appendChild(navContainer);
+
+        // Insere o controle de paginação abaixo da tabela
+        table.parentNode.insertBefore(paginationDiv, table.nextSibling);
+
+        // Exibe a página inicial
+        renderTableWithPagination(rows, currentPage, rowsPerPage, pageDisplay, totalPages);
+
+        // Função para alternar as páginas e atualizar o número da página
+        function changePage(page) {
+            if (page < 1) currentPage = 1;
+            if (page > totalPages) currentPage = totalPages;
+
+            renderTableWithPagination(rows, currentPage, rowsPerPage, pageDisplay, totalPages);
+        }
+    }
+
+    // Função para exibir apenas as linhas da página atual (excluindo as "more-info" inicialmente ocultas)
+    function renderTableWithPagination(rows, page, rowsPerPage, pageDisplay, totalPages) {
+        rows.forEach((row, index) => {
+            row.style.display = (index >= (page - 1) * rowsPerPage && index < page * rowsPerPage) ? "" : "none";
+        });
+        pageDisplay.innerText = `Página ${page} de ${totalPages}`;
+    }
+
+    // CSS básico para a área de paginação com espaçamento ajustado
+    var style = document.createElement("style");
+    style.innerHTML = `
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .rows-per-page-select {
+            margin-right: auto;
+            padding: 5px;
+        }
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-buttons button {
+            padding: 5px 10px;
+        }
+    `;
+    document.head.appendChild(style);
 </script>

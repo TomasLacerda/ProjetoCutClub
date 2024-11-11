@@ -53,7 +53,7 @@
         }
     </style>
 </head>
-<body>
+<body data-page-id="editarContato">
     <?php
     include_once "include/menu.php";
     ?>

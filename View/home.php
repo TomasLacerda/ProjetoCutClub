@@ -14,9 +14,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
-<body>
+<body data-page-id="home">
     <?php
     include_once "include/menu.php";
+    include_once "../Model/ContatoDAO.php";
+
+    $id = $_SESSION['id'];
+
+    $ContatoDAO = new ContatoDAO();
+    $stFiltro = " WHERE admin = 1 AND id =".$id;
+    $rsAdmin = $ContatoDAO->recuperaTodos($stFiltro);
+
+    $stFiltro = " WHERE barbeiro = 1 AND id =".$id;
+    $rsBarbeiro = $ContatoDAO->recuperaTodos($stFiltro);
     ?>
 
     <div class="container">
@@ -30,9 +40,19 @@
                         <span class="subtitle"> Agende seu horário por aqui.</span>
                     </a>
                     <a href="historico.php" class="quadro bg-light rounded p-4 mb-4 text-dark">
-                        <h5><i class="fas fa-calendar-alt mr-2"></i> Histórico:</h5>
-                        <span class="subtitle"> Consulte seu histórico de agendamentos por aqui.</span>
+                        <h5><i class="fas fa-calendar-alt mr-2"></i> Serviços:</h5>
+                        <span class="subtitle"> Consulte seu histórico e agendamentos por aqui.</span>
                     </a>
+                    <?php
+                        if ($rsAdmin->num_rows > 0 && $rsBarbeiro->num_rows > 0) {
+                    ?>
+                        <a href="pontosFidelidade.php" class="quadro bg-light rounded p-4 mb-4 text-dark">
+                            <h5><i class="fas fa-calendar-alt mr-2"></i> Pontos de Fidelidade:</h5>
+                            <span class="subtitle"> Gerencie os pontos de fidelidade por aqui.</span>
+                        </a>
+                    <?php
+                        }
+                    ?>
                     <a href="fidelidade.php" class="quadro bg-light rounded p-4 mb-4 text-dark">
                         <h5><i class="fas fa-star mr-2"></i> Plano Fidelidade:</h5>
                         <span class="subtitle"> Saiba tudo sobre o Plano Fidelidade e consulte seus pontos por aqui.</span>

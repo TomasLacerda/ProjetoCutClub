@@ -73,7 +73,7 @@
         }*/
 </style>
 
-<body>
+<body data-page-id="cadastrarServico">
     <?php
     include_once "include/menu.php";
     include_once "../Model/ContatoDAO.php";        

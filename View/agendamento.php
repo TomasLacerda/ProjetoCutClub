@@ -57,7 +57,7 @@
         }
     </style>
 </head>
-<body>
+<body data-page-id="agendamento">
     <?php
         include_once "include/menu.php";
         include_once "../Model/ContatoDAO.php";
@@ -108,6 +108,7 @@
             // Gera os horários disponíveis com base na duração do serviço
             $horariosDisponiveis = [];
             $expediente = $rsexpediente->fetch_assoc();
+
             if ($expediente) {
                 $horariosDisponiveis = gerarHorarios(
                     $expediente['hr_inicio'], 
@@ -466,8 +467,9 @@
             // Cria um novo objeto Date no formato que o JavaScript entende
             var dataObj = new Date(ano, mes, dia);
 
-            // Obtém o dia da semana (0 = Domingo, 6 = Sábado)
+            // Obtém o dia da semana (1 = segunda, 7 = domingo)
             var diaSemana = dataObj.getDay();
+            diaSemana = diaSemana === 0 ? 7 : diaSemana;
 
             // Faz uma requisição AJAX para enviar o ID do barbeiro ao PHP
             $.ajax({

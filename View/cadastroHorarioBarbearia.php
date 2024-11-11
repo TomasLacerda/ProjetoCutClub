@@ -58,7 +58,7 @@
     }
 </style>
 
-<body>
+<body data-page-id="cadastrarHorarioBarbearia">
     <?php
     include_once "include/menu.php";
     include_once "../Model/ContatoDAO.php";        

@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
-<body>
+<body data-page-id="cadastro">
     <?php
         if ($cadastroBarbeiro == 1) {
             include_once "include/menu.php";
@@ -65,7 +65,7 @@
                     </form>
                     <p></p>
                     <div class="rodape">
-                        <p style="font-weight: bold;">Campos marcados com (*) sÃ£o obrigatÃ³rios.</p>
+                        <p style="font-weight: bold;">Campos marcados com (*) são obrigatórios.</p>
                     </div>
                     <div id="status"></div>
                 </fieldset>
@@ -101,7 +101,7 @@
 <div class="container">
                 <div>
                     <fieldset class="box">
-                    <h1 id="subtitle">Cadastro</h1>
+                    <h1 id="subtitle">Cadastro de Usuário</h1>
                     <form>
                         <div class="form-group mb-3">
                             <label for="nome">Nome Completo*</label>
@@ -134,7 +134,7 @@
                     </form>
                         <p></p>
                         <div class="rodape">
-                            <p style="font-weight: bold;">Campos marcados com (*) sÃ£o obrigatÃ³rios.</p>
+                            <p style="font-weight: bold;">Campos marcados com (*) são obrigatórios.</p>
                         </div>
                         <div id="status"></div>
                     </fieldset>

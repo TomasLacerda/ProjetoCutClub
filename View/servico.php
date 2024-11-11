@@ -51,7 +51,7 @@
     </style>
 </head>
 
-<body>
+<body data-page-id="servico">
 <?php
     include_once "include/menu.php";
     include_once "../Model/ServicoDAO.php";
@@ -62,7 +62,7 @@
     }
 
     $ServicoDAO = new ServicoDAO();
-    $stFiltro = "";
+    $stFiltro = " ORDER BY nome ASC";
     $resultado = $ServicoDAO->recuperaTodos($stFiltro);
     ?>
 
@@ -72,24 +72,23 @@
                 <fieldset class="box">
                     <h1 id="subtitle">Serviços</h1>
                     <div class="m-5"></div>
-                    <table class="table text-white table-bg">
+                    <table class="table text-white table-bg" id="servico">
                         <thead>
                             <tr>
-                                <th scope="col">ID</th>
                                 <th scope="col">Imagem</th>
                                 <th scope="col">Nome</th>
+                                <th scope="col">Valor</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while($dados = mysqli_fetch_assoc($resultado)) { ?>
                                     <tr onclick="toggleInfo(<?= $dados['id'] ?>)">
-                                        <td><?= $dados['id'] ?></td>
                                         <td><img src="<?= $dados['imagem'] ?>" alt="<?= $dados['nome'] ?>" class="img-thumbnail" /></td>
                                         <td><?= $dados['nome'] ?></td>
+                                        <td>R$<?= $dados['valor'] ?></td>
                                     </tr>
                                     <tr class="more-info" id="info_<?= $dados['id'] ?>">
                                         <td colspan="3">
-                                            Valor: R$<?= $dados['valor'] ?><br>
                                             Duração: <?= formatarDuracao($dados['duracao']) ?><br> <!-- Aqui a funÃ§Ã£o Ã© chamada -->
                                             Descricao: <?= $dados['descricao'] ?><br>
                                             <!--<a href="editarContato.php?source=Barbeiro&id=<?= $dados['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i></a>-->
@@ -119,6 +118,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/scripts.js"></script>
     <script>
+        createSearchBar("servico");
+        createPagination("servico", 10);
+
         function toggleInfo(id) {
             event.stopPropagation(); // Previne a propagaÃ§Ã£o do evento no DOM
             $('#info_' + id).toggleClass('show');

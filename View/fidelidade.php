@@ -95,7 +95,8 @@
         }
     </style>
 </head>
-<body>
+
+<body data-page-id="planoFidelidade">
     <?php
         include_once "include/menu.php";
         include_once "../Model/AgendaDAO.php";

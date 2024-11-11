@@ -43,7 +43,7 @@
     </style>
 </head>
 
-<body>
+<body data-page-id="cadastrarBarbeiro">
     <?php
     include_once "include/menu.php";
     include_once "../Model/ContatoDAO.php";
@@ -55,7 +55,7 @@
     }
     
     $ContatoDAO = new ContatoDAO();
-    $stFiltro = " WHERE barbeiro = 0";
+    $stFiltro = " WHERE barbeiro = 0 group by nome order by nome";
     $resultado = $ContatoDAO->recuperaTodos($stFiltro);
     ?>
 
@@ -66,7 +66,7 @@
                     <h1 id="subtitle">Cadastrar Barbeiro</h1>
                     <div class="m-5"></div>
                     <p>Para incluir um novo funcionário, selecione o cadastro dele na tabela abaixo e salve. Se o funcionário não estiver cadastrado, <a href="cadastro.php?source=cadastrarBarbeiro">clique aqui</a> para criar um novo cadastro.</p>
-                    <table class="table text-white table-bg">
+                    <table class="table text-white table-bg" id="barbeiros">
                         <thead>
                             <tr>
                                 <th scope="col">Id</th>
@@ -79,7 +79,7 @@
                                 $formattedPhone = formatPhone($dados['telefone']); ?>
                                 <tr onclick="toggleInfo(<?= $dados['id'] ?>)">
                                     <td><?= $dados['id'] ?></td>
-                                    <td><?= $dados['nome'] . ' ' . $dados['sobrenome'] ?></td>
+                                    <td><?= $dados['nome'] ?></td>
                                     <td>
                                         <div class="form-check">
                                             <input class="form-check-input position-static" type="checkbox" name="boBarbeiro[]" id="boBarbeiro_<?= $dados['id'] ?>" value="<?= $dados['id'] ?>" aria-label="...">
@@ -114,6 +114,9 @@
     <script src="js/scripts.js"></script>
 
     <script>
+        createSearchBar("barbeiros");
+        createPagination("barbeiros", 10); 
+
         function toggleInfo(id) {
             event.stopPropagation(); // Previne a propagaÃ§Ã£o do evento no DOM
             $('#info_' + id).toggleClass('show');

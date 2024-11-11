@@ -321,7 +321,7 @@ function cadastrarServico()
 
     // Validação e sanitização de dados recebidos via POST
     $nome = isset($_POST['nome']) ? $_POST['nome'] : null;
-    $valor = isset($_POST['valor']) ? floatval($_POST['valor']) : null;
+    $valor = isset($_POST['valor']) ? $_POST['valor'] : null;
     $duracao = isset($_POST['duracao']) ? $_POST['duracao'] : null;
     $descricao = isset($_POST['descricao']) ? $_POST['descricao'] : null;
 

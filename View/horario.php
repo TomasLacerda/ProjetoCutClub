@@ -45,7 +45,7 @@
     </style>
 </head>
 
-<body>
+<body data-page-id="horario">
     <?php
     include_once "include/menu.php";
     include_once "../Model/DtIndisponivelDAO.php";
@@ -126,8 +126,11 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">Dia Semana</th>
-                                        <th scope="col">hora inicial</th>
-                                        <th scope="col">hora final</th>
+                                        <th scope="col">Início</th>
+                                        <th scope="col">Fim</th>
+                                        <th scope="col">Início Intervalo</th>
+                                        <th scope="col">Fim Intervalo</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -138,17 +141,9 @@
                                             echo "<td>".$dados['id_semana']."</td>";
                                             echo "<td>".$dados['hr_inicio']."</td>";
                                             echo "<td>".$dados['hr_fim']."</td>";
+                                            echo "<td>".$dados['hora_inicio_intervalo']."</td>";
+                                            echo "<td>".$dados['hora_fim_intervalo']."</td>";
                                             echo "</tr>";
-                                            // Detalhes adicionados após cada linha
-                                             echo "<tr class='more-info' id='info_".$dados['id']."' style='background-color: rgba(192,192,192,0.3);'>
-                                                   <td colspan='5'>Início Intervalo: ".$dados['hora_inicio_intervalo']."<br>Fim Intervalo: ".$dados['hora_fim_intervalo'].
-                                                  "<br><div class='d-flex'>";
-                                                    echo ' <a href="#" class="delete-link" data-id="' . $dados['id'] . '" title="Excluir">';
-                                                    echo '<i class="fas fa-trash-alt" style="color: red;"></i>';
-                                                    echo '</a>';
-                                             "</div>".
-                                            "</td></tr>
-                                            ";
                                         }
                                     ?>
                                 </tbody>

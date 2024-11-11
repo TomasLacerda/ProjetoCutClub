@@ -66,8 +66,9 @@ class AgendaDAO
         $conexao = $db->abrirConexaoDB();
     
         // Monta query Busca
-        $sql = "SELECT DATE_FORMAT(dthora_execucao, '%d/%m/%Y') AS data, agenda.id, servico.imagem, DATE_FORMAT(dthora_execucao, '%H:%i') AS hora_minuto, contato.nome AS barbeiro, servico.nome as servico, valor, dthora_consumo,confirmado, CONCAT(cliente.nome) AS cliente,
-                        CASE WHEN dthora_consumo IS NULL THEN 'FALSE'
+        $sql = "SELECT DATE_FORMAT(dthora_execucao, '%d/%m/%Y') AS data, agenda.id, servico.imagem, DATE_FORMAT(dthora_execucao, '%H:%i') AS hora_minuto, contato.nome AS barbeiro, servico.nome as servico, valor, dthora_consumo, CONCAT(cliente.nome) AS cliente,
+                        CASE WHEN confirmado = 1 THEN 'Sim' ELSE 'Não' END AS confirmado
+                        , CASE WHEN dthora_consumo IS NULL THEN 'FALSE'
                         ELSE 'TRUE' END AS comparaceu 
                 FROM agenda
                 JOIN servico
@@ -76,6 +77,77 @@ class AgendaDAO
                     ON contato.id = agenda.id_barbeiro
                 JOIN contato as cliente
                     ON cliente.id = agenda.id_cliente
+                ".$stFiltro;
+    
+        // cria o prepared statement
+        $stmt = $conexao->prepare($sql);
+    
+        // Executa o Statement
+        $stmt->execute();
+    
+        // Guarda todos os resultados encontrados em um array
+        $resultado = $stmt->get_result();
+    
+        // Fecha Statement e conex�o
+        $stmt->close();
+        $db->fecharConexaoDB($conexao);
+    
+        return $resultado;
+    }
+
+    public function recuperaQntdServicosRealizados($stFiltro="")
+    {
+        require_once "ConexaoDB.php";        
+        $db = new ConexaoDB();
+    
+        $conexao = $db->abrirConexaoDB();
+    
+        // Monta query Busca
+        $sql = "SELECT count(confirmado) as quantidade, DATE_FORMAT(dthora_execucao, '%d/%m/%Y') AS data
+                FROM agenda
+                JOIN servico
+                    ON servico.id = agenda.id_servico
+                JOIN contato
+                    ON contato.id = agenda.id_barbeiro
+                JOIN contato as cliente
+                    ON cliente.id = agenda.id_cliente
+                ".$stFiltro;
+    
+        // cria o prepared statement
+        $stmt = $conexao->prepare($sql);
+    
+        // Executa o Statement
+        $stmt->execute();
+    
+        // Guarda todos os resultados encontrados em um array
+        $resultado = $stmt->get_result();
+    
+        // Fecha Statement e conex�o
+        $stmt->close();
+        $db->fecharConexaoDB($conexao);
+    
+        return $resultado;
+    }
+
+    public function recuperaQntdServicosTodasDatas($stFiltro="")
+    {
+        require_once "ConexaoDB.php";        
+        $db = new ConexaoDB();
+    
+        $conexao = $db->abrirConexaoDB();
+    
+        // Monta query Busca
+        $sql = "SELECT DATE_FORMAT(dthora_execucao, '%d/%m/%Y') AS data,
+                    COUNT(agenda.id) AS total_cortes
+                FROM agenda
+                JOIN servico
+                    ON servico.id = agenda.id_servico
+                JOIN contato
+                    ON contato.id = agenda.id_barbeiro
+                JOIN contato as cliente
+                    ON cliente.id = agenda.id_cliente
+                GROUP BY DATE_FORMAT(dthora_execucao, '%d/%m/%Y')
+                ORDER BY dthora_execucao;
                 ".$stFiltro;
     
         // cria o prepared statement
@@ -105,7 +177,7 @@ class AgendaDAO
                   FROM agenda 
                   JOIN servico ON servico.id = agenda.id_servico 
                   ".$stFiltro;
-                  
+
         $stmt = $conexao->prepare($query);
         $stmt->execute();
         $resultado = $stmt->get_result();    
